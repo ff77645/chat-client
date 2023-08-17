@@ -3,7 +3,7 @@ import {useNavigate} from 'react-router-dom'
 
 export default function Forgot(){
 
-    const navigate =useNavigate()
+    const navigate = useNavigate()
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">

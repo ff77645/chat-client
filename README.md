@@ -1,8 +1,36 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+全局  
+- [ ] 主题切换
+- [ ] 兼容移动端
+- [ ] 交互动效
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+### 分支
+
+登录  
+- [x] 登录
+- [x] 注册
+- [ ] 修改密码
+- [ ] 找回密码
+
+
+
+个人信息  
+- [ ] 修改头像
+- [ ] 修改昵称
+- [ ] 修改邮箱?
+
+
+
+聊天  
+- [ ] 创建房间
+- [ ] 加入房间
+- [x] 发送/接收文本内容
+- [ ] 发送/接收图片
+- [ ] 发送/接收表情
+- [ ] 发送/播放音乐
+- [ ] 发送/播放视频
+- [ ] 视频聊天
+- [ ] 共享画板
+- [ ] 发送/接收文件

@@ -6,7 +6,7 @@ export default function MsgText({isSelf,text,username,time}){
 
 
     return (
-        <div className={isSelf ? 'chat chat-end' : 'chat chat-start' }>
+        <div className={'p-2 chat ' + (isSelf ? 'chat-end' : 'chat-start') }>
             <div className="chat-image avatar">
                 <div className="w-12 rounded-full">
                     <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />

@@ -146,7 +146,7 @@ const Chat = () => {
           <div
             ref={scrollRef}
             className=" overflow-auto"
-            style={{ height: "calc(100vh - 7.5rem)" }}
+            style={{ height: "calc(100vh - 8rem)" }}
           >
             <div ref={scrollInnerRef}>
               {msgList.map((item, index) => (
@@ -160,7 +160,7 @@ const Chat = () => {
               ))}
             </div>
           </div>
-          <div className="p-2 h-14 flex-none flex flex-row ">
+          <div className="p-2 h-16 flex-none flex flex-row ">
             <div className="join w-full">
               <input
                 value={inputValue}

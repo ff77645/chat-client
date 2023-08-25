@@ -13,7 +13,7 @@ export default function Login(){
       if(!email ||!password) return alert('请输入账号密码')
       if(password !== passwordConfirm) return alert('两次密码不一致')
       await register({
-        username:email,
+        email:email,
         password
       })
       alert('注册成功');

@@ -1,49 +1,92 @@
 import {useNavigate} from 'react-router-dom'
+import {useState} from 'react'
+
 
 
 export default function Forgot(){
 
     const navigate = useNavigate()
+    const [email,setEmail] = useState('')
+    const [password,setPassword] = useState('')
+    const [confirmPassword,setConfirmPassword] = useState('')
+    const [verifyCode,setVerifyCode] = useState('')
+    const [countDown,setCountDown] = useState(0)
+
+    const handleConfirm = async ()=>{
+      // if(!email || !password) return alert('请输入账号密码')
+      // const res = await login({
+      //     username:email,
+      //     password
+      // })
+      // console.log({res});
+      // localStorage.setItem('userinfo',JSON.stringify(res))
+      // navigate('/chat')
+  }
+  const countDownTime = (num)=>{
+      setCountDown(num)
+      const t = setInterval(()=>{
+        setCountDown(num=>{
+          if(num <= 1) clearInterval(t)
+          return num - 1
+        })
+      },1000)
+
+  }
+
+  const sendVerifyCode = ()=>{
+    if(countDown) return
+    countDownTime(10)
+  }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
-          <div className="w-full max-w-md px-4">
-            <form className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-              <div className="mb-4">
-                <label className="block text-gray-200 text-sm font-bold mb-2" htmlFor="username">
-                  Username
-                </label>
-                <input
-                  className="appearance-none bg-gray-700 border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
-                  id="username"
-                  type="text"
-                  placeholder="Enter your username"
-                />
-              </div>
-              <div className="mb-6">
-                <label className="block text-gray-200 text-sm font-bold mb-2" htmlFor="password">
-                  Password
-                </label>
-                <input
-                  className="appearance-none bg-gray-700 border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
-                  id="password"
-                  type="password"
-                  placeholder="Enter your password"
-                />
-              </div>
-              <div className="flex items-center justify-center">
-                <button
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  type="button"
-                >
-                  Sign In
-                </button>
-              </div>
-            </form>
-            <p className="text-center text-gray-500 text-xs">
-              &copy; 2023 My Website. All rights reserved.
-            </p>
+      <div className="flex justify-center items-center h-full">
+      <div className="flex flex-col p-6 rounded-md sm:max-w-md w-full h-full sm:h-auto sm:p-10 dark:dark:bg-gray-900 dark:dark:text-gray-100">
+          <div className="mb-8 text-center">
+              <h1 className="my-3 text-4xl font-bold">找回密码</h1>
+              {/* <p className="text-sm dark:dark:text-gray-400">登录访问您的帐户</p> */}
           </div>
-        </div>
+          <form noValidate="" action="" className="space-y-12">
+              <div className="space-y-4">
+                  <div>
+                      <label htmlFor="email" className="block mb-2 text-sm">邮件地址</label>
+                      <input value={email} onChange={e=>setEmail(e.target.value)} type="email" name="email" id="email" placeholder="ikun@gmail.com" className="w-full px-3 py-2 border rounded-md dark:dark:border-gray-700 dark:dark:bg-gray-900 dark:dark:text-gray-100" />
+                  </div>
+                  <div>
+                      <div className="flex justify-start mb-2">
+                          <label htmlFor="password" className="text-sm">密码</label>
+                      </div>
+                      <input value={password} onChange={e=>setPassword(e.target.value)} type="password" name="password" id="password" placeholder="*****" className="w-full px-3 py-2 border rounded-md dark:dark:border-gray-700 dark:dark:bg-gray-900 dark:dark:text-gray-100" />
+                  </div>
+                  <div>
+                      <div className="flex justify-start mb-2">
+                          <label htmlFor="password" className="text-sm">确认密码</label>
+                      </div>
+                      <input value={confirmPassword} onChange={e=>setConfirmPassword(e.target.value)} type="password" name="password" id="password" placeholder="*****" className="w-full px-3 py-2 border rounded-md dark:dark:border-gray-700 dark:dark:bg-gray-900 dark:dark:text-gray-100" />
+                  </div>
+                  <div>
+                      <div className="flex justify-start mb-2">
+                          <label htmlFor="password" className="text-sm">验证码</label>
+                      </div>
+                      <div className="flex gap-2">
+                        <input value={verifyCode} onChange={e=>setVerifyCode(e.target.value)} type="text" placeholder="验证码" className="w-full px-3 py-2 border rounded-md dark:dark:border-gray-700 dark:dark:bg-gray-900 dark:dark:text-gray-100" />
+                        <button onClick={sendVerifyCode} type='button' className="px-3 py-3 text-sm whitespace-nowrap rounded-md dark:dark:bg-violet-400 dark:dark:text-gray-900">
+                          {
+                            countDown > 0 ? (countDown+'').padStart(2,0) : '获取验证码'
+                          }
+                        </button>
+                      </div>
+                  </div>
+              </div>
+              <div className="space-y-2">
+                  <div>
+                      <button onClick={handleConfirm} type="button" className="w-full px-8 py-3 font-semibold rounded-md dark:dark:bg-violet-400 dark:dark:text-gray-900">确认</button>
+                  </div>
+                  <p className="px-6 text-sm text-center dark:dark:text-gray-400">
+                      <a rel="noopener noreferrer" href="/login" className="hover:underline dark:dark:text-violet-400">返回登录</a>.
+                  </p>
+              </div>
+          </form>
+      </div>
+  </div>
       )
 }

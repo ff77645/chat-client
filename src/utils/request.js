@@ -1,9 +1,15 @@
 import axios from "axios"
 
+let token = ''
 
 const resuest = axios.create({
     baseURL:'http://localhost:3000',
     timeout:5000,
+})
+
+resuest.interceptors.request.use((cofnig)=>{
+    console.log({cofnig});
+    return cofnig
 })
 
 resuest.interceptors.response.use(res=>{

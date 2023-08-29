@@ -2,17 +2,20 @@ import { useState, useRef, useEffect } from "react";
 import MsgText from "../components/MsgText";
 import "./chat.css";
 import { io } from "socket.io-client";
+import {
+  getRoom,
+  createRoom,
+} from '../api/chat.js'
 
 /* 
 房间
-
 */
 const SEND_TEXT = "send_text";
 
 const initSocket = () => {
   const socket = io("http://localhost:3000/chat", {
     query: {
-      roomnum: "abc123456",
+      // roomnum: "abc123456",
     },
   });
   socket.on("connect", () => {
@@ -23,67 +26,82 @@ const initSocket = () => {
     console.log("disconnect:", socket.id);
   });
 
-  return {
-    socket,
-  };
+  return socket
 };
-const useRoomOperation = ()=>{
-    console.log('inited useRoomOperation');
-    const [roomNumber,setRoomNumber] = useState('')
-    const [roomName,setRoomName] = useState('')
 
-    const handleJoinRoom = ()=>{
+const useConnetRoom = ()=>{
+  const [isConneted,setIsConneted] = useState(false)
+  const socket = useRef()
 
+
+  const handleJoinRoom = async roomNum =>{
+    if(!roomNum) return alert('请输入房间号')
+    const res = await getRoom({roomNum})
+    console.log({res,roomNum});
+  }
+
+  const handleCreateRoom = async (roomName)=>{
+    if(!roomName) return alert('请设置房间名称')
+    // window.my_modal_1.closeModal()
+    const res = await createRoom({roomName})
+    console.log({res});
+  }
+
+  useEffect(()=>{
+    socket.current = initSocket();
+
+    return ()=>{
+      socket.current.off()
     }
+  },[])
 
-    const handleCreateRoom = ()=>{
-        window.my_modal_1.closeModal()
-    }
-
-    return {
-        roomName,
-        roomNumber,
-        setRoomName,
-        setRoomNumber,
-        handleJoinRoom,
-        handleCreateRoom,
-    }
-
+  return {
+    isConneted,
+    handleJoinRoom,
+    handleCreateRoom,
+    socket,
+  }
 }
 
 
 
-const { socket } = initSocket();
+
 const userinfo = JSON.parse(localStorage.getItem('userinfo'))
 const Chat = () => {
   const scrollRef = useRef(null);
   const scrollInnerRef = useRef(null);
   const [msgList, setMsgList] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [roomNumber,setRoomNumber] = useState('')
+  const [roomName,setRoomName] = useState('')
+
+  const {
+    isConneted,
+    handleJoinRoom,
+    handleCreateRoom,
+    socket,
+  } = useConnetRoom()
 
   const handleEnter = (e) => {
     if (e.key !== "Enter") return;
     if (!inputValue) return;
     const now = new Date();
     const msg = {
-      sender: socket.id,
+      sender: socket.current.id,
       username: "username2",
       text: inputValue,
       time: `${now.getHours()}:${("" + now.getMinutes()).padStart(2, 0)}`,
     };
-    socket.emit(SEND_TEXT, msg);
+    socket.current.emit(SEND_TEXT, msg);
     setMsgList(msgList.concat(msg));
     setInputValue("");
   };
   let index = 1
   useEffect(()=>{
-      socket.on(SEND_TEXT, (msg) => {
+      socket.current.on(SEND_TEXT, (msg) => {
         console.log(index++); 
         setMsgList(msgList=>msgList.concat(msg));
       });
-      return ()=>{
-        socket.off()
-      }
   },[])
 
   useEffect(() => {
@@ -93,14 +111,10 @@ const Chat = () => {
     });
   }, [msgList]);
 
-  const {
-    roomName,
-    roomNumber,
-    setRoomName,
-    setRoomNumber,
-    handleJoinRoom,
-    handleCreateRoom,
-  } = useRoomOperation()
+  
+
+  
+
   return (
     <>
       <section className="h-screen flex flex-col">
@@ -163,6 +177,7 @@ const Chat = () => {
           <div className="p-2 h-16 flex-none flex flex-row ">
             <div className="join w-full">
               <input
+                disabled={!isConneted}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleEnter}
@@ -275,7 +290,7 @@ const Chat = () => {
                   className="input input-bordered join-item"
                   placeholder="房间名称"
                 />
-                <button onClick={handleCreateRoom} className="btn join-item ">创建</button>
+                <button onClick={()=>handleCreateRoom(roomName)} className="btn join-item ">创建</button>
               </div>
             </div>
           </div>
@@ -296,7 +311,7 @@ const Chat = () => {
                   className="input input-bordered join-item"
                   placeholder="房间号"
                 />
-                <button onClick={handleJoinRoom} className="btn join-item ">加入</button>
+                <button onClick={()=>handleJoinRoom(roomNumber)} className="btn join-item ">加入</button>
               </div>
             </div>
           </div>

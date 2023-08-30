@@ -5,8 +5,8 @@ import {login} from '../api/login'
 export default function Login(){
     const navigate = useNavigate()
 
-    const [email,setEmail] = useState('')
-    const [password,setPassword] = useState('')
+    const [email,setEmail] = useState('admin@qq.com')
+    const [password,setPassword] = useState('123456')
 
     const handleLogin = async ()=>{
         if(!email || !password) return alert('请输入账号密码')
@@ -15,7 +15,8 @@ export default function Login(){
             password
         })
         console.log({res});
-        localStorage.setItem('userinfo',JSON.stringify(res))
+        localStorage.setItem('token',res.token)
+        localStorage.setItem('userinfo',JSON.stringify(res.user))
         navigate('/chat')
     }
 

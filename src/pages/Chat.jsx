@@ -11,11 +11,14 @@ import {
 房间
 */
 const SEND_TEXT = "send_text";
+const JOIN_ROOM = 'join_room'
+
 
 const initSocket = () => {
+  const user = JSON.parse(localStorage.getItem('userinfo'))
   const socket = io("http://localhost:3000/chat", {
     query: {
-      // roomnum: "abc123456",
+      userid:user.id
     },
   });
   socket.on("connect", () => {
@@ -29,22 +32,32 @@ const initSocket = () => {
   return socket
 };
 
+
 const useConnetRoom = ()=>{
   const [isConneted,setIsConneted] = useState(false)
   const socket = useRef()
+  const [roomData,setRoomData] = useState({})
 
+  const joinRoom = room =>{
+    socket.current.emit(JOIN_ROOM,room.id)
+    setIsConneted(true)
+    // handleCloseModal()
+    setRoomData(room)
+
+  }
 
   const handleJoinRoom = async roomNum =>{
     if(!roomNum) return alert('请输入房间号')
-    const res = await getRoom({roomNum})
-    console.log({res,roomNum});
+    const {room} = await getRoom({roomNum})
+    console.log({room,roomNum});
+    joinRoom(room)
   }
 
   const handleCreateRoom = async (roomName)=>{
     if(!roomName) return alert('请设置房间名称')
-    // window.my_modal_1.closeModal()
-    const res = await createRoom({roomName})
-    console.log({res});
+    const {room} = await createRoom({roomName})
+    console.log({room,roomName});
+    joinRoom(room)
   }
 
   useEffect(()=>{
@@ -60,13 +73,14 @@ const useConnetRoom = ()=>{
     handleJoinRoom,
     handleCreateRoom,
     socket,
+    roomData,
+    setRoomData,
   }
 }
 
 
 
 
-const userinfo = JSON.parse(localStorage.getItem('userinfo'))
 const Chat = () => {
   const scrollRef = useRef(null);
   const scrollInnerRef = useRef(null);
@@ -74,23 +88,25 @@ const Chat = () => {
   const [inputValue, setInputValue] = useState("");
   const [roomNumber,setRoomNumber] = useState('')
   const [roomName,setRoomName] = useState('')
+  const user = useRef(JSON.parse(localStorage.getItem('userinfo')))
 
   const {
     isConneted,
     handleJoinRoom,
     handleCreateRoom,
     socket,
+    roomData,
   } = useConnetRoom()
 
   const handleEnter = (e) => {
     if (e.key !== "Enter") return;
     if (!inputValue) return;
-    const now = new Date();
     const msg = {
-      sender: socket.current.id,
-      username: "username2",
+      sender: user.current.id,
+      nickname: user.current.nickname,
       text: inputValue,
-      time: `${now.getHours()}:${("" + now.getMinutes()).padStart(2, 0)}`,
+      date: Date.now(),
+      avatar:user.current.avatar,
     };
     socket.current.emit(SEND_TEXT, msg);
     setMsgList(msgList.concat(msg));
@@ -110,10 +126,6 @@ const Chat = () => {
       behavior: "smooth",
     });
   }, [msgList]);
-
-  
-
-  
 
   return (
     <>
@@ -138,7 +150,7 @@ const Chat = () => {
               />
             </svg>
           </label>
-          <div className="">title</div>
+          <div className="">{roomData.roomName || ''}{roomData.roomNum ? `(房间号:${roomData.roomNum})` : ''}</div>
           <button type="button">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -166,10 +178,11 @@ const Chat = () => {
               {msgList.map((item, index) => (
                 <MsgText
                   key={index}
-                  isSelf={item.sender === socket.id}
+                  isSelf={item.sender === user.current.id}
                   text={item.text}
-                  username={item.username}
-                  time={item.time}
+                  nickname={item.nickname}
+                  avatar={item.avatar}
+                  date={item.date}
                 ></MsgText>
               ))}
             </div>
@@ -254,10 +267,10 @@ const Chat = () => {
               </div>
             </div>
             <div className="flex justify-center text-gray-100 leading-10">
-              User Name
+              {user.current.nickname}
             </div>
             <div className="flex justify-center text-gray-300 text-sm leading-8">
-              Email:645321@gmail.com
+              {user.current.email}
             </div>
             <div className="flex flex-row flex-nowrap justify-around mt-4">
               <label

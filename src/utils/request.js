@@ -8,6 +8,7 @@ const resuest = axios.create({
 })
 
 resuest.interceptors.request.use((cofnig)=>{
+    cofnig.headers.authorization = token || (token = localStorage.getItem('token'))
     console.log({cofnig});
     return cofnig
 })

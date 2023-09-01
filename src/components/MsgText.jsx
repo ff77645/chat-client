@@ -12,7 +12,7 @@ export default function MsgText({isSelf,text,nickname,date,avatar}){
                     <img src={avatar} />
                 </div>
             </div>
-            <div className={isSelf ? 'chat-header flex flex-row-reverse items-center gap-2' : 'chat-header flex flex-row items-center gap-2'}>
+            <div className={ 'chat-header flex items-center gap-2' + isSelf ? 'flex-row-reverse' : 'flex-row'}>
                 <span>{nickname}</span><time className="text-xs opacity-50">{dayjs(date).format('HH:mm')}</time>
             </div>
             <div className="chat-bubble">{text}</div>

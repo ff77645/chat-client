@@ -60,13 +60,13 @@ const useConnetRoom = ()=>{
     joinRoom(room)
   }
 
-  useEffect(()=>{
-    socket.current = initSocket();
+  // useEffect(()=>{
+  //   socket.current = initSocket();
 
-    return ()=>{
-      socket.current.off()
-    }
-  },[])
+  //   return ()=>{
+  //     socket.current.off()
+  //   }
+  // },[])
 
   return {
     isConneted,

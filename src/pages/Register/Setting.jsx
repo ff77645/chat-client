@@ -1,80 +1,10 @@
-import {useNavigate} from 'react-router-dom'
+import {Card,CardBody,CardHeader,CardFooter,Input,Spacer,Button,Avatar,RadioGroup,Radio, input} from '@nextui-org/react'
 import {useState,useRef} from 'react'
-import {register,updateUser} from '../api/login'
-import {Card,CardBody,CardHeader,CardFooter,Input,Spacer,Button} from '@nextui-org/react'
-
-import "./chat.css";
+import {register,updateUser} from '../../api/login'
+import {useNavigate} from 'react-router-dom'
 
 
-
-
-export default function Login(){
-    const [userinfo,setUserinfo] = useState('')
-
-    return (
-        <div className="h-screen flex justify-center items-center bg-background">
-            {/* {
-                userinfo ? <Setting userinfo={userinfo} /> : <Register setUserinfo={setUserinfo}/>
-            } */}
-            <Setting userinfo={userinfo} />
-        </div>
-    );
-}
-
-
-function Register({setUserinfo}){
-    const [email,setEmail] = useState('')
-    const [password,setPassword] = useState('')
-    const [passwordConfirm,setPasswordConfirm] = useState('')
-
-    const handleRegister = async ()=>{
-        if(!email ||!password) return alert('请输入账号密码')
-        if(password !== passwordConfirm) return alert('两次密码不一致')
-        const res = await await register({
-            email:email,
-            password
-        })
-        console.log({res});
-        //alert('注册成功');
-        setUserinfo(res.user)
-    }
-    return (
-        <Card className='w-[500px] bg-primary-foreground'>
-            <CardHeader className='pt-4'>
-                <h1 className='text-3xl text-center font-bold w-full text-foreground'>注册</h1>
-            </CardHeader>
-            <CardBody>
-                <Input value={email} onChange={e=>setEmail(e.target.value)} type="email" label="邮箱" placeholder="请输入你的邮件地址" />
-                <Spacer y={5}></Spacer>
-                <Input value={password} onChange={e=>setPassword(e.target.value)} type="password" label="密码" placeholder="请输入密码" />
-                <Spacer y={5}></Spacer>
-                <Input value={passwordConfirm} onChange={e=>setPasswordConfirm(e.target.value)} type="password" label="确认密码" placeholder="请再次输入密码" />
-            </CardBody>
-            <CardFooter className='flex flex-col pb-4'>
-                <Button onClick={handleRegister} type="button" fullWidth className='bg-primary' size='lg'>注册</Button>
-                <Spacer y={2}></Spacer>
-                <div className="text-foreground">
-                    <a href="/register" className='text-gray-300'> 去登陆 </a>
-                </div>
-            </CardFooter>
-        </Card>
-    )
-}
-
-const noop = ()=>{}
-
-function getRandomName(length){
-    function randomAccess(min,max){
-        return Math.floor(Math.random() * (min - max) + max)
-    }
-    let name = ''
-    for(let i = 0; i < length ;i++){
-        name += String.fromCharCode(randomAccess(0x4e00,0x9FA5))
-    }
-    return name
-}
-
-function Setting({userinfo}){
+export default function Setting({userinfo}){
     const navigate = useNavigate()
     const [nickname,setNickname] = useState(getRandomName(Math.ceil(Math.random() * 3) + 2))
     const [gender,setGender] = useState(0)
@@ -185,19 +115,59 @@ function Setting({userinfo}){
                 <h1 className='text-3xl text-center font-bold w-full text-foreground'>设置</h1>
             </CardHeader>
             <CardBody>
-                <Input value={email} onChange={e=>setEmail(e.target.value)} type="email" label="邮箱" placeholder="请输入你的邮件地址" />
-                <Spacer y={5}></Spacer>
-                <Input value={password} onChange={e=>setPassword(e.target.value)} type="password" label="密码" placeholder="请输入密码" />
-                <Spacer y={5}></Spacer>
-                <Input value={passwordConfirm} onChange={e=>setPasswordConfirm(e.target.value)} type="password" label="确认密码" placeholder="请再次输入密码" />
-            </CardBody>
-            <CardFooter className='flex flex-col pb-4'>
-                <Button onClick={handleRegister} type="button" fullWidth className='bg-primary' size='lg'>注册</Button>
-                <Spacer y={2}></Spacer>
-                <div className="text-foreground">
-                    <a href="/register" className='text-gray-300'> 去登陆 </a>
+                <div className="flex justify-center mb-4">
+                    <Avatar 
+                        src={avatar}
+                        fallback={
+                            <span onClick={selectFile} className="">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-6 h-6 text-white"
+                                >
+                                    <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                                    />
+                                </svg>
+                            </span>
+                        }
+                        className="w-20 h-20 text-large cursor-pointer" 
+                    />
                 </div>
+                <Input value={nickname} onChange={e=>setNickname(e.target.value)} type="email" label="昵称" placeholder="请输入你的邮件地址" />
+                <Spacer y={5}></Spacer>
+                <div className="flex gap-6">
+                    <div>性别</div>
+                    <RadioGroup
+                        label=""
+                        orientation="horizontal"
+                        value={gender}
+                        onValueChange={setGender}
+                    >
+                        <Radio value={1}>男</Radio>
+                        <Radio value={2}>女</Radio>
+                    </RadioGroup>
+                </div>
+            </CardBody>
+            <CardFooter>
+                <Button onClick={handleConfirm} type="button" fullWidth className='bg-primary' size='lg'>确定</Button>
             </CardFooter>
         </Card>
     )
+}
+
+function getRandomName(length){
+    function randomAccess(min,max){
+        return Math.floor(Math.random() * (min - max) + max)
+    }
+    let name = ''
+    for(let i = 0; i < length ;i++){
+        name += String.fromCharCode(randomAccess(0x4e00,0x9FA5))
+    }
+    return name
 }
